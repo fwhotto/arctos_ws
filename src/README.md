@@ -1,4 +1,56 @@
-This is a fork from https://github.com/coen132/Arctos?utm_source=chatgpt.com adapted for ROS2 jazzy.
+This is a fork from https://github.com/coen132/Arctos adapted for ROS 2 Jazzy.
+
+## Jazzy simulation (recommended)
+
+`arctos_moveit_config` is the canonical simulation configuration. The
+`arctos_bringup` and `arctos_moveit` demo launch commands use this same configuration.
+The model uses one `mock_components/GenericSystem`, the standard arm and gripper
+`joint_trajectory_controller` instances, and a `joint_state_broadcaster`.
+This is kinematic simulation: position commands produce simulated joint feedback;
+it does not simulate gravity, contact forces, motor electronics, or payload dynamics.
+
+```bash
+cd ~/arctos_ws
+source /opt/ros/jazzy/setup.bash
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch arctos_moveit_config demo.launch.py
+```
+
+In RViz select planning group `arm`, set a reachable goal, then use **Plan** or
+**Plan & Execute**. The `gripper` group supports joint-space goals. Set
+`use_rviz:=false` for headless operation.
+
+### Repeatable headless validation
+
+```bash
+ros2 run arctos_moveit_config validate_simulation.py
+```
+
+This starts and stops its own headless demo in ROS domain 173. Use
+`--domain-id NUMBER` to select another unused domain and `--log PATH` to change
+the launch log location. It exits nonzero on failure and checks controller
+activation, all eight joint states, initial collision validity, end-effector
+FK/IK, timed arm/gripper plans, execution results, and final joint feedback.
+
+### Model and limits
+
+- Geometry comes from `arctos_description/urdf/arctos_urdf.xacro`. The demo disables
+  its legacy control additions and includes exactly one mock control system.
+- Joint naming is `joint_1` through `joint_6`, plus `jaw1` and `jaw2`.
+- `arctos_moveit_config/config/joint_limits.yaml` contains **simulation tuning**:
+  arm 0.5 rad/s and 1.0 rad/s²; jaws 0.01 m/s and 0.02 m/s². These are not
+  manufacturer ratings. Default planning scaling is 10%.
+- Arm joints retain the source model's continuous-joint assumptions. Physical
+  travel limits and calibration have not been established for a real build.
+- The URDF supplies the fixed world frame; the SRDF attaches the gripper to
+  `Link_6_1`. Only the arm uses KDL; the branched gripper uses joint-space planning.
+
+The older packages/configurations below remain as upstream references; use the
+canonical demo above for the validated Jazzy simulation.
+
+## Original upstream instructions (ROS 2 Humble)
 
 # Arctos
 
@@ -39,4 +91,3 @@ To test out and make sure everything is correctly installed you can launch the d
 `ros2 launch arctos_moveit_config demo.launch.py` 
 
 This should launch RVIZ and load the Arctos robot arm. 
-

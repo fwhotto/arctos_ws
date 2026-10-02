@@ -2,8 +2,11 @@
 <robot name="arctos" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find arctos_description)/urdf/materials.xacro" />
-<xacro:include filename="$(find arctos_description)/urdf/arctos_urdf.trans" />
-<xacro:include filename="$(find arctos_description)/urdf/arctos_urdf.gazebo" />
+<xacro:arg name="legacy_control" default="true"/>
+<xacro:if value="$(arg legacy_control)">
+  <xacro:include filename="$(find arctos_description)/urdf/arctos_urdf.trans" />
+  <xacro:include filename="$(find arctos_description)/urdf/arctos_urdf.gazebo" />
+</xacro:if>
 
 <link name="world"/>
 <joint name="base_joint" type="fixed">
@@ -287,7 +290,9 @@
   <limit upper="0.015" lower="0.0" effort="100" velocity="100"/>
 </joint>
 
-<xacro:include filename="$(find arctos_hardware_interface)/ros2_control/arctos.ros2_control.xacro" />
-<xacro:arctos_ros2_control name="arctos"/>
+<xacro:if value="$(arg legacy_control)">
+  <xacro:include filename="$(find arctos_hardware_interface)/ros2_control/arctos.ros2_control.xacro" />
+  <xacro:arctos_ros2_control name="arctos"/>
+</xacro:if>
 
 </robot>

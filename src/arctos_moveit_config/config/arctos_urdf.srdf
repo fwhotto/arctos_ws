@@ -46,9 +46,9 @@
         <joint name="jaw2" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="gripper_1" parent_link="base_link" group="gripper" parent_group="arm"/>
+    <end_effector name="gripper_1" parent_link="Link_6_1" group="gripper" parent_group="arm"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="world" type="fixed" parent_frame="world" child_link="base_link"/>
+    <!-- The URDF already contains world -> base_link. -->
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="Gripper_1" link2="Left_jaw_1" reason="Adjacent"/>
     <disable_collisions link1="Gripper_1" link2="Link_3_1" reason="Never"/>
