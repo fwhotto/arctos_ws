@@ -34,6 +34,38 @@ the launch log location. It exits nonzero on failure and checks controller
 activation, all eight joint states, initial collision validity, end-effector
 FK/IK, timed arm/gripper plans, execution results, and final joint feedback.
 
+### Obstacle avoidance demo
+
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/arctos_ws/install/setup.bash
+ros2 run arctos_moveit_config obstacle_demo.py
+```
+
+The demo launches its own mock simulation and RViz in ROS domain **174**; no
+separate launch is needed. Choose another unused domain with `--domain-id NUMBER`.
+It moves to a fixed start configuration, plans an unobstructed baseline, then
+uses forward kinematics to place an 8 cm box across that path (falling back to
+smaller boxes if necessary). The box is a real MoveIt planning-scene collision
+object in the `world` frame.
+
+The demo verifies that the box blocks the baseline while leaving both endpoints
+collision-free, replans using OMPL, checks the detour at joint-space intervals
+of at most 0.01 rad, and executes it. Final joint feedback must match the goal.
+This is sampled collision validation, not a continuous collision guarantee.
+Box placement and the detour can vary with the randomized planner.
+
+RViz stays open with the box visible after execution; press Enter in the terminal
+to close the simulation. For automated validation without a display:
+
+```bash
+ros2 run arctos_moveit_config obstacle_demo.py --headless
+```
+
+Headless mode exits after the demo and returns nonzero on failure. Both modes
+stop their launched processes on exit. Launch output is saved to
+`/tmp/arctos-obstacle-demo.log` (override with `--log PATH`).
+
 ### Model and limits
 
 - Geometry comes from `arctos_description/urdf/arctos_urdf.xacro`. The demo disables

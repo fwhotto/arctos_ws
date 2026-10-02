@@ -9,4 +9,5 @@ install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}
   PATTERN "setup_assistant.launch" EXCLUDE)
 install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 install(FILES .setup_assistant DESTINATION share/${PROJECT_NAME})
-install(PROGRAMS scripts/validate_simulation.py DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/validate_simulation.py scripts/obstacle_demo.py
+  DESTINATION lib/${PROJECT_NAME})
